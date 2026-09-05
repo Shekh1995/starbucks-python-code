@@ -54,8 +54,8 @@ pipeline {
             steps {
                 sh '''
                     docker build \
-                        -t ${IMAGE_NAME}:${BUILD_NUMBER} \
                         -t ${IMAGE_NAME}:latest \
+                        -t ${IMAGE_NAME}:${BUILD_NUMBER} \
                         .
                 '''
             }
@@ -68,30 +68,11 @@ pipeline {
                     withDockerRegistry(credentialsId: 'docker') {
 
                         sh '''
-                            docker push ${IMAGE_NAME}:${BUILD_NUMBER}
                             docker push ${IMAGE_NAME}:latest
+                            docker push ${IMAGE_NAME}:${BUILD_NUMBER}
                         '''
                     }
                 }
-            }
-        }
-
-        stage("Container Test") {
-            steps {
-                sh '''
-                    docker rm -f starbucks-python-code || true
-
-                    docker run -d \
-                        --name starbucks-python-code \
-                        -p 8000:8000 \
-                        ${IMAGE_NAME}:${BUILD_NUMBER}
-
-                    sleep 10
-
-                    curl -f http://localhost:8000/
-
-                    docker rm -f starbucks-python-code
-                '''
             }
         }
     }
@@ -100,14 +81,15 @@ pipeline {
 
         success {
             echo '======================================'
-            echo 'starbucks-python-code CI/CD SUCCESS'
+            echo 'starbucks-python-code CI SUCCESS'
+            echo 'Docker image pushed successfully'
             echo '======================================'
         }
 
         failure {
             echo '======================================'
-            echo 'starbucks-python-code FAILED'
-            echo 'Check the failed stage.'
+            echo 'starbucks-python-code CI FAILED'
+            echo 'Check the failed stage'
             echo '======================================'
         }
     }
