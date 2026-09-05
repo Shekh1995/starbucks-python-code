@@ -8,13 +8,20 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
+        stage("Clean Workspace") {
             steps {
-                checkout scm
+                cleanWs()
             }
         }
 
-        stage('Python Setup') {
+        stage("Git Checkout") {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Shekh1995/starbucks-python-code.git'
+            }
+        }
+
+        stage("Python Setup") {
             steps {
                 sh '''
                     python3 --version
@@ -23,7 +30,7 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage("Install Dependencies") {
             steps {
                 sh '''
                     python3 -m venv venv
@@ -34,7 +41,7 @@ pipeline {
             }
         }
 
-        stage('Application Verification') {
+        stage("Application Verification") {
             steps {
                 sh '''
                     . venv/bin/activate
@@ -43,7 +50,7 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage("Build Docker Image") {
             steps {
                 sh '''
                     docker build \
@@ -54,33 +61,25 @@ pipeline {
             }
         }
 
-        stage('Docker Push') {
+        stage("Tag & Push to DockerHub") {
             steps {
+                script {
 
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
-                    )
-                ]) {
+                    withDockerRegistry(credentialsId: 'docker') {
 
-                    sh '''
-                        echo "$DOCKER_PASSWORD" | docker login \
-                            -u "$DOCKER_USERNAME" \
-                            --password-stdin
-
-                        docker push ${IMAGE_NAME}:${BUILD_NUMBER}
-                        docker push ${IMAGE_NAME}:latest
-                    '''
+                        sh '''
+                            docker push ${IMAGE_NAME}:${BUILD_NUMBER}
+                            docker push ${IMAGE_NAME}:latest
+                        '''
+                    }
                 }
             }
         }
 
-        stage('Container Test') {
+        stage("Container Test") {
             steps {
                 sh '''
-                    docker rm -f vrindavan-nights-test || true
+                    docker rm -f starbucks-python-code || true
 
                     docker run -d \
                         --name starbucks-python-code \
