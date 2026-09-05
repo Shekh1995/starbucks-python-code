@@ -1,0 +1,62 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage("Deploy to Container") {
+            steps {
+                script {
+
+                    // Stop and remove old container
+                    sh """
+                    if [ \$(docker ps -aq -f name=starbucks-python-code) ]; then
+                        docker rm -f starbucks-python-code
+                    fi
+                    """
+
+                    // Pull latest image from Docker Hub
+                    sh """
+                    docker pull shekhar013/starbucks-python-code:latest
+                    """
+
+                    // Run latest container
+                    sh """
+                    docker run -d \
+                        --name starbucks-python-code \
+                        -p 8000:8000 \
+                        shekhar013/starbucks-python-code:latest
+                    """
+
+                    // Wait for application startup
+                    sh "sleep 10"
+
+                    // Verify application
+                    sh """
+                    curl -f http://localhost:8000/
+                    """
+
+                    // Show running container
+                    sh "docker ps"
+                }
+            }
+        }
+    }
+
+    post {
+
+        success {
+            echo '======================================'
+            echo 'starbucks-python-code CD SUCCESS'
+            echo 'Application deployed successfully'
+            echo '======================================'
+        }
+
+        failure {
+            echo '======================================'
+            echo 'starbucks-python-code CD FAILED'
+            echo 'Check the deployment stage'
+            echo '======================================'
+        }
+    }
+}
