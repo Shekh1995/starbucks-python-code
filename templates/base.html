@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset=UTF-8>
+  <meta name=viewport content=width=device-width, initial-scale=1.0>
+  <title>{% block title %}Starbucks Coffee India{% endblock %}</title>
+  <script src=https://cdn.tailwindcss.com></script>
+  <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=SoDo+Sans:wght@300;400;600;700;800&display=swap');
+    body {
+      font-family: 'SoDo Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .sb-green { background-color: #1e3932; }
+    .text-sb-green { color: #1e3932; }
+    .sb-emerald { background-color: #006241; }
+    .hover-sb-emerald:hover { background-color: #004f34; }
+  </style>
+</head>
+<body class=bg-[#f9f9f9] text-[#212529] flex flex-col min-h-screen>
+
+  <!-- Desktop Header -->
+  <header class=bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm>
+    <div class=max-w-7xl mx-auto px-4 sm:px-6 lg:px-8>
+      <div class=flex items-center justify-between h-20>
+        
+        <!-- Logo & Navigation -->
+        <div class=flex items-center space-x-8>
+          <a href=/ class=flex-shrink-0 flex items-center gap-3>
+            <img class=h-12 w-12 rounded-full src=/static/img/logo.png alt=Starbucks Logo>
+            <span class=font-bold text-lg tracking-wider text-sb-green hidden md:inline>STARBUCKS</span>
+          </a>
+          
+          <nav class=hidden md:flex space-x-6 text-sm font-semibold tracking-wide>
+            <a href=/ class=py-2 transition-colors duration-150 {{ 'text-sb-green border-b-2 border-[#1e3932] font-bold' if active_nav == 'home' else 'text-gray-700 hover:text-emerald-800' }}>Home</a>
+            <a href=/giftcards class=py-2 transition-colors duration-150 {{ 'text-sb-green border-b-2 border-[#1e3932] font-bold' if active_nav == 'gift' else 'text-gray-700 hover:text-emerald-800' }}>Gift</a>
+            <a href=/ordering class=py-2 transition-colors duration-150 {{ 'text-sb-green border-b-2 border-[#1e3932] font-bold' if active_nav == 'order' else 'text-gray-700 hover:text-emerald-800' }}>Order</a>
+            <a href=/pay class=py-2 transition-colors duration-150 {{ 'text-sb-green border-b-2 border-[#1e3932] font-bold' if active_nav == 'pay' else 'text-gray-700 hover:text-emerald-800' }}>Pay</a>
+            <a href=/store class=py-2 transition-colors duration-150 {{ 'text-sb-green border-b-2 border-[#1e3932] font-bold' if active_nav == 'store' else 'text-gray-700 hover:text-emerald-800' }}>Store</a>
+          </nav>
+        </div>
+
+        <!-- Search Bar, Profile, & Cart -->
+        <div class=flex items-center space-x-4>
+          
+          <!-- Search input -->
+          <form action=/search method=GET class=relative hidden sm:block>
+            <i class=fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400></i>
+            <input 
+              type=text 
+              name=q 
+              placeholder=Looking for something specific? 
+              value={{ query or '' }}
+              class=w-64 lg:w-80 pl-9 pr-4 py-2 text-xs md:text-sm rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:bg-white transition-all shadow-inner
+            >
+          </form>
+
+          <!-- Cart Button with Drawer Trigger -->
+          <button onclick=toggleCartDrawer() class=relative p-2 rounded-full hover:bg-gray-100 text-gray-700 transition>
+            <i class=fa-solid fa-bag-shopping text-xl></i>
+            <span id=header-cart-badge class=absolute -top-1 -right-1 bg-emerald-700 text-white font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center {{ 'hidden' if cart_count == 0 else '' }}>
+              {{ cart_count }}
+            </span>
+          </button>
+
+          <!-- Profile Icon -->
+          <a href=/pay class=p-2 border border-gray-700 rounded-full hover:bg-gray-100 text-gray-700 transition title=My Starbucks Profile>
+            <i class=fa-regular fa-user text-base></i>
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Sub-bar -->
+    <div class=md:hidden flex justify-around border-t border-gray-200 bg-white py-2 px-1 text-xs font-semibold>
+      <a href=/ class=flex flex-col items-center {{ 'text-emerald-800' if active_nav == 'home' else 'text-gray-600' }}>
+        <i class=fa-solid fa-house mb-1></i> Home
+      </a>
+      <a href=/giftcards class=flex flex-col items-center {{ 'text-emerald-800' if active_nav == 'gift' else 'text-gray-600' }}>
+        <i class=fa-solid fa-gift mb-1></i> Gift
+      </a>
+      <a href=/ordering class=flex flex-col items-center {{ 'text-emerald-800' if active_nav == 'order' else 'text-gray-600' }}>
+        <i class=fa-solid fa-mug-hot mb-1></i> Order
+      </a>
+      <a href=/pay class=flex flex-col items-center {{ 'text-emerald-800' if active_nav == 'pay' else 'text-gray-600' }}>
+        <i class=fa-solid fa-credit-card mb-1></i> Pay
+      </a>
+      <a href=/store class=flex flex-col items-center {{ 'text-emerald-800' if active_nav == 'store' else 'text-gray-600' }}>
+        <i class=fa-solid fa-location-dot mb-1></i> Store
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content Body -->
+  <main class=flex-grow>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Slide-over Cart Drawer -->
+  <div id=cart-drawer class=fixed inset-0 z-50 overflow-hidden pointer-events-none transition-opacity duration-300 opacity-0>
+    <div onclick=toggleCartDrawer() class=absolute inset-0 bg-black bg-opacity-50 transition-opacity></div>
+    <div class=fixed inset-y-0 right-0 max-w-full flex>
+      <div class=w-screen max-w-md bg-white shadow-2xl flex flex-col pointer-events-auto transform translate-x-full transition-transform duration-300 ease-in-out id=cart-drawer-panel>
+        
+        <!-- Header -->
+        <div class=p-6 bg-sb-green text-white flex items-center justify-between>
+          <h2 class=text-xl font-bold flex items-center gap-2>
+            <i class=fa-solid fa-bag-shopping></i> Your Starbucks Order
+          </h2>
+          <button onclick=toggleCartDrawer() class=text-white hover:text-gray-200>
+            <i class=fa-solid fa-xmark text-2xl></i>
+          </button>
+        </div>
+
+        <!-- Cart Items List -->
+        <div id=cart-items-container class=flex-1 overflow-y-auto p-6 space-y-4>
+          <p class=text-gray-500 text-center py-10>Your bag is empty. Start adding handcrafted sips & bites!</p>
+        </div>
+
+        <!-- Footer / Checkout -->
+        <div class=p-6 border-t border-gray-200 bg-gray-50>
+          <div class=flex justify-between items-center mb-4 text-base font-bold>
+            <span>Grand Total:</span>
+            <span id=cart-drawer-total class=text-sb-green text-xl>₹ 0.00</span>
+          </div>
+          <div class=flex gap-2>
+            <button onclick=clearCart() class=w-1/3 py-3 border border-red-300 text-red-600 rounded-full font-semibold hover:bg-red-50 text-sm>
+              Clear
+            </button>
+            <a href=/pay class=w-2/3 py-3 bg-emerald-700 hover:bg-emerald-800 text-white text-center rounded-full font-bold shadow-md hover:shadow-lg transition>
+              Checkout & Pay
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Footer -->
+  <footer class=bg-[#0e382c] text-white pt-12 pb-8 mt-16>
+    <div class=max-w-7xl mx-auto px-4 sm:px-6 lg:px-8>
+      <div class=grid grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-b border-emerald-900>
+        
+        <div class=col-span-2 md:col-span-1>
+          <img src=/static/img/logo.png class=w-16 h-16 rounded-full alt=Starbucks logo>
+          <p class=text-xs text-emerald-300 mt-4 leading-relaxed>
+            Crafting the finest espresso beverages, teas, and fresh treats since 1971.
+          </p>
+        </div>
+
+        <div>
+          <h4 class=font-bold text-sm tracking-wider uppercase mb-4 text-emerald-200>About Us</h4>
+          <ul class=space-y-2 text-xs text-gray-300>
+            <li><a href=# class=hover:text-white>Our Heritage</a></li>
+            <li><a href=# class=hover:text-white>Our Company</a></li>
+            <li><a href=# class=hover:text-white>Coffeehouse</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class=font-bold text-sm tracking-wider uppercase mb-4 text-emerald-200>Responsibility</h4>
+          <ul class=space-y-2 text-xs text-gray-300>
+            <li><a href=# class=hover:text-white>Community</a></li>
+            <li><a href=# class=hover:text-white>Ethical Sourcing</a></li>
+            <li><a href=# class=hover:text-white>Environment</a></li>
+            <li><a href=# class=hover:text-white>Diversity</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class=font-bold text-sm tracking-wider uppercase mb-4 text-emerald-200>Quick Links</h4>
+          <ul class=space-y-2 text-xs text-gray-300>
+            <li><a href=/ordering class=hover:text-white>Delivery Menu</a></li>
+            <li><a href=/giftcards class=hover:text-white>Season's Gifting</a></li>
+            <li><a href=/store class=hover:text-white>Store Locator</a></li>
+            <li><a href=/pay class=hover:text-white>Starbucks Rewards</a></li>
+          </ul>
+        </div>
+
+        <div class=col-span-2 md:col-span-1>
+          <h4 class=font-bold text-sm tracking-wider uppercase mb-4 text-emerald-200>Connect With Us</h4>
+          <div class=flex space-x-4 text-xl mb-6>
+            <a href=https://www.instagram.com/starbucksindia/ target=_blank class=hover:text-emerald-400><i class=fa-brands fa-instagram></i></a>
+            <a href=https://www.facebook.com/starbucksindia target=_blank class=hover:text-emerald-400><i class=fa-brands fa-facebook-f></i></a>
+            <a href=https://twitter.com/starbucksindia target=_blank class=hover:text-emerald-400><i class=fa-brands fa-twitter></i></a>
+          </div>
+          <div class=flex flex-col space-y-2>
+            <img src=/static/img/appstoreiOS.png class=h-9 w-auto object-contain cursor-pointer alt=Download on App Store>
+            <img src=/static/img/appstoreAndroid.png class=h-9 w-auto object-contain cursor-pointer alt=Get it on Google Play>
+          </div>
+        </div>
+
+      </div>
+
+      <div class=pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-emerald-300>
+        <div class=flex space-x-6 mb-4 md:mb-0>
+          <a href=# class=hover:underline>Privacy Notice</a>
+          <span>|</span>
+          <a href=# class=hover:underline>Terms of Use</a>
+          <span>|</span>
+          <a href=# class=hover:underline>Cookie Preferences</a>
+        </div>
+        <p>© 2026 Starbucks Coffee Company. Python FastAPI Edition.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Global Cart Management Javascript -->
+  <script>
+    let isCartOpen = false;
+
+    function toggleCartDrawer() {
+      const drawer = document.getElementById('cart-drawer');
+      const panel = document.getElementById('cart-drawer-panel');
+      if (!isCartOpen) {
+        drawer.classList.remove('pointer-events-none', 'opacity-0');
+        panel.classList.remove('translate-x-full');
+        fetchCart();
+        isCartOpen = true;
+      } else {
+        drawer.classList.add('pointer-events-none', 'opacity-0');
+        panel.classList.add('translate-x-full');
+        isCartOpen = false;
+      }
+    }
+
+    async function fetchCart() {
+      try {
+        const res = await fetch('/api/cart');
+        const data = await res.json();
+        renderCart(data);
+      } catch (e) {
+        console.error(Cart error:, e);
+      }
+    }
+
+    function renderCart(cartData) {
+      const badge = document.getElementById('header-cart-badge');
+      if (badge) {
+        badge.innerText = cartData.count;
+        if (cartData.count > 0) {
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+
+      const totalEl = document.getElementById('cart-drawer-total');
+      if (totalEl) {
+        totalEl.innerText = '₹ ' + Number(cartData.total).toFixed(2);
+      }
+
+      const container = document.getElementById('cart-items-container');
+      if (!container) return;
+
+      if (!cartData.items || cartData.items.length === 0) {
+        container.innerHTML = '<p class=text-gray-500 text-center py-10>Your bag is empty. Start adding handcrafted sips & bites!</p>';
+        return;
+      }
+
+      container.innerHTML = cartData.items.map(item => 
+        <div class=flex items-center justify-between border-b pb-3>
+          <img src=" class=w-14 h-14 object-cover rounded-lg mr-3 shadow-sm />
+ <div class=flex-1>
+ <h4 class=font-bold text-sm text-gray-800></h4>
+ <p class=text-xs text-gray-500>₹ × </p>
+ </div>
+ <div class=flex items-center gap-2>
+ <span class=font-bold text-emerald-800 text-sm>₹ </span>
+ <button onclick=removeFromCart('') class=text-gray-400 hover:text-red-500 p-1>
+ <i class=fa-solid fa-trash-can text-sm></i>
+ </button>
+ </div>
+ </div>
+ ).join('');
+ }
+
+ async function addToCart(itemId) {
+ try {
+ const res = await fetch('/api/cart/add', {
+ method: 'POST',
+ headers: {'Content-Type': 'application/json'},
+ body: JSON.stringify({ item_id: itemId, quantity: 1 })
+ });
+ const data = await res.json();
+ renderCart(data);
+ toggleCartDrawer();
+ } catch (e) {
+ alert(Failed to add to cart:  + e);
+ }
+ }
+
+ async function removeFromCart(itemId) {
+ try {
+ const res = await fetch('/api/cart/remove', {
+ method: 'POST',
+ headers: {'Content-Type': 'application/json'},
+ body: JSON.stringify({ item_id: itemId })
+ });
+ const data = await res.json();
+ renderCart(data);
+ } catch (e) {
+ alert(Failed to remove item:  + e);
+ }
+ }
+
+ async function clearCart() {
+ try {
+ const res = await fetch('/api/cart/clear', { method: 'POST' });
+ const data = await res.json();
+ renderCart(data);
+ } catch (e) {
+ alert(Failed to clear cart:  + e);
+ }
+ }
+ </script>
+</body>
+</html>

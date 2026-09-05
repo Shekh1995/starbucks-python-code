@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Starbucks Pay & Rewards{% endblock %}
+
+{% block content %}
+<div class=max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8>
+  <div>
+    <h1 class=text-3xl font-extrabold text-sb-green>Starbucks Pay & Card</h1>
+    <p class=text-sm text-gray-500 mt-1>Manage your Starbucks card balance, earn Stars, and enjoy fast contactless payment.</p>
+  </div>
+
+  <!-- Digital Card Mockup -->
+  <div class=rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-950>
+    <div class=flex justify-between items-start mb-12>
+      <div>
+        <span class=text-xs uppercase font-bold tracking-widest text-emerald-300>Starbucks Rewards</span>
+        <h3 class=text-2xl font-bold mt-1>{{ account.tier }}</h3>
+      </div>
+      <img src=/static/img/logo.png class=w-12 h-12 rounded-full border border-white/20 alt=Starbucks logo>
+    </div>
+
+    <div class=space-y-4>
+      <div class=text-lg tracking-widest font-mono>{{ account.card_number }}</div>
+      <div class=flex justify-between items-end>
+        <div>
+          <span class=text-xs text-emerald-300 block>Card Holder</span>
+          <span class=font-semibold text-sm>{{ account.card_holder }}</span>
+        </div>
+        <div class=text-right>
+          <span class=text-xs text-emerald-300 block>Available Balance</span>
+          <span id=current-balance class=text-2xl font-black text-amber-300>₹ {{ account.balance }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stars & Benefits Progress -->
+  <div class=bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6>
+    <div class=flex items-center gap-4>
+      <div class=w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 text-2xl>
+        <i class=fa-solid fa-star></i>
+      </div>
+      <div>
+        <h4 class=font-bold text-gray-900>{{ account.stars }} Stars Available</h4>
+        <p class=text-xs text-gray-500>You are 25 Stars away from a free handcrafted tall beverage!</p>
+      </div>
+    </div>
+    <div class=w-full sm:w-48 bg-gray-200 h-2.5 rounded-full overflow-hidden>
+      <div class=bg-amber-500 h-full rounded-full style=width: 83%;></div>
+    </div>
+  </div>
+
+  <!-- Add Money / Top Up -->
+  <div class=bg-white rounded-2xl p-6 border border-gray-200 shadow-sm>
+    <h3 class=font-bold text-lg text-sb-green mb-4>Quick Reload / Top-up Card</h3>
+    <div class=grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4>
+      <button onclick=topUp(200) class=py-3 border-2 border-emerald-700 text-emerald-800 rounded-xl font-bold hover:bg-emerald-50 transition text-sm>+ ₹ 200</button>
+      <button onclick=topUp(500) class=py-3 border-2 border-emerald-700 text-emerald-800 rounded-xl font-bold hover:bg-emerald-50 transition text-sm>+ ₹ 500</button>
+      <button onclick=topUp(1000) class=py-3 border-2 border-emerald-700 text-emerald-800 rounded-xl font-bold hover:bg-emerald-50 transition text-sm>+ ₹ 1,000</button>
+      <button onclick=topUp(2000) class=py-3 border-2 border-emerald-700 text-emerald-800 rounded-xl font-bold hover:bg-emerald-50 transition text-sm>+ ₹ 2,000</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  async function topUp(amt) {
+    try {
+      const res = await fetch('/api/pay/topup', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ amount: amt })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        document.getElementById('current-balance').innerText = '₹ ' + Number(data.new_balance).toFixed(2);
+        alert('Successfully reloaded ₹ ' + amt + ' to your Starbucks Card!');
+      }
+    } catch(e) {
+      alert('Top up failed: ' + e);
+    }
+  }
+</script>
+{% endblock %}

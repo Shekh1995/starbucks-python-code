@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Starbucks e-Gift Cards{% endblock %}
+
+{% block content %}
+<div class=bg-sb-green text-white py-12 px-4 text-center>
+  <h1 class=text-3xl md:text-4xl font-extrabold mb-3>Starbucks e-Gift Cards</h1>
+  <p class=text-sm md:text-base text-emerald-200 max-w-xl mx-auto>
+    Share moments of joy, celebration, and premium roasts with personalized digital gift cards delivered instantly.
+  </p>
+</div>
+
+<div class=max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12>
+  <div class=grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8>
+    {% for card in gift_cards %}
+    <div class=bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition duration-200 border border-gray-100 flex flex-col justify-between>
+      <div class=h-48 overflow-hidden bg-emerald-950>
+        <img src={{ card.img }} class=w-full h-full object-cover transform hover:scale-105 transition duration-300 alt={{ card.title }}>
+      </div>
+      <div class=p-6>
+        <span class=text-xs uppercase font-bold tracking-widest text-emerald-700 bg-emerald-50 px-2 py-1 rounded>Digital Card</span>
+        <h3 class=text-lg font-bold text-gray-900 mt-2 mb-1>{{ card.title }}</h3>
+        <p class=text-xs text-gray-500 mb-6 leading-relaxed>{{ card.description }}</p>
+        <button onclick=alert('Digital Gift Card: {{ card.title }} selected! Instant delivery via email simulated.') class=w-full py-2.5 bg-sb-green hover:bg-emerald-900 text-white rounded-full text-xs font-bold transition shadow-sm>
+          Send as Gift (₹ 500 - ₹ 5000)
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

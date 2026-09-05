@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Order Menu - Starbucks Coffee India{% endblock %}
+
+{% block content %}
+<div class=bg-white border-b border-gray-200>
+  <div class=max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6>
+    <h1 class=text-3xl font-extrabold text-sb-green mb-4>Starbucks Order Menu</h1>
+    
+    <!-- Category Pills -->
+    <div class=flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none>
+      {% for cat in categories %}
+      <a href=/ordering?cat={{ cat.id }} 
+         class=px-5 py-2 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition {{ 'bg-sb-green text-white shadow' if selected_cat == cat.id else 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}>
+        {{ cat.label }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class=max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10>
+  <div class=grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6>
+    {% for item in items %}
+    <div class=bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between>
+      
+      <div>
+        <div class=h-48 w-full overflow-hidden bg-gray-100 relative>
+          <img src={{ item.img }} class=w-full h-full object-cover transform hover:scale-105 transition duration-300 alt={{ item.title }}>
+          {% if item.type %}
+          <div class=absolute top-3 right-3 bg-white/90 p-1.5 rounded-full shadow>
+            {% if item.type == 'veg' %}
+            <span class=w-3.5 h-3.5 border border-green-600 flex items-center justify-center rounded-sm><span class=w-1.5 h-1.5 bg-green-600 rounded-full></span></span>
+            {% else %}
+            <span class=w-3.5 h-3.5 border border-red-600 flex items-center justify-center rounded-sm><span class=w-1.5 h-1.5 bg-red-600 rounded-full></span></span>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div class=p-5>
+          <div class=flex items-center justify-between text-xs text-gray-500 mb-1>
+            <span class=uppercase tracking-wider font-semibold text-emerald-800>{{ item.category }}</span>
+            {% if item.kcal > 0 %}<span>{{ item.kcal }} kcal</span>{% endif %}
+          </div>
+          <h3 class=font-bold text-gray-900 text-base mb-1.5>{{ item.title }}</h3>
+          <p class=text-xs text-gray-500 line-clamp-2 leading-relaxed>{{ item.description }}</p>
+        </div>
+      </div>
+
+      <div class=p-5 pt-0 flex items-center justify-between mt-3>
+        <div>
+          <span class=text-xs text-gray-400 block>Price</span>
+          <span class=text-lg font-bold text-sb-green>₹ {{ item.price }}</span>
+        </div>
+        <button onclick=addToCart('{{ item.id }}') class=bg-sb-emerald hover-sb-emerald text-white text-xs font-bold px-4 py-2 rounded-full shadow transition flex items-center gap-1.5>
+          <i class=fa-solid fa-plus></i> Add Item
+        </button>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

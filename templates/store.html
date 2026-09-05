@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Find a Store - Starbucks Coffee India{% endblock %}
+
+{% block content %}
+<div class=max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10>
+  <div class=mb-8>
+    <h1 class=text-3xl font-extrabold text-sb-green>Find a Starbucks Near You</h1>
+    <p class=text-sm text-gray-500 mt-1>Locate nearby coffeehouses, view store hours, and explore available amenities.</p>
+  </div>
+
+  <div class=grid grid-cols-1 lg:grid-cols-3 gap-8>
+    
+    <!-- Store Cards List -->
+    <div class=lg:col-span-2 space-y-4>
+      {% for store in stores %}
+      <div class=bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:border-emerald-600 transition flex flex-col sm:flex-row justify-between items-start gap-4>
+        <div>
+          <div class=flex items-center gap-2 mb-1>
+            <span class=w-2.5 h-2.5 bg-emerald-600 rounded-full animate-pulse></span>
+            <span class=text-xs font-bold text-emerald-800 uppercase tracking-wider>Open Now</span>
+            <span class=text-xs text-gray-400>• {{ store.distance }}</span>
+          </div>
+          <h3 class=text-lg font-bold text-gray-900>{{ store.name }}</h3>
+          <p class=text-xs text-gray-600 mt-1>{{ store.address }}, {{ store.city }}</p>
+          <p class=text-xs text-gray-500 mt-2><i class=fa-regular fa-clock mr-1></i> {{ store.timings }}</p>
+          
+          <div class=flex flex-wrap gap-2 mt-4>
+            {% for feat in store.features %}
+            <span class=text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md font-medium>{{ feat }}</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class=flex flex-col gap-2 w-full sm:w-auto>
+          <a href=/ordering class=bg-sb-emerald hover-sb-emerald text-white text-xs font-bold px-4 py-2.5 rounded-full text-center shadow-sm>
+            Order Here
+          </a>
+          <button onclick=alert('Directions to {{ store.name }} opened in maps.') class=border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-bold px-4 py-2 rounded-full text-center>
+            Directions
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Map Info Card -->
+    <div class=bg-sb-green text-white rounded-3xl p-8 flex flex-col justify-between shadow-xl min-h-[350px]>
+      <div>
+        <i class=fa-solid fa-map-location-dot text-4xl text-emerald-400 mb-4></i>
+        <h3 class=text-2xl font-bold mb-2>Order Ahead & Pick Up</h3>
+        <p class=text-xs text-emerald-200 leading-relaxed>
+          Skip the counter queue! Order your favorite espresso drinks and artisan sandwiches directly from your phone and collect them fresh when you arrive.
+        </p>
+      </div>
+
+      <div class=pt-6 border-t border-emerald-800>
+        <a href=/ordering class=block w-full py-3 bg-white text-gray-900 font-bold text-center rounded-full text-xs shadow-md hover:bg-gray-100 transition>
+          Browse Menu & Order
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
